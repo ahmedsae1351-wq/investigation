@@ -5,6 +5,7 @@
 ## blog
 
 * [Investigating ELPACO-team Exploiting Confluence CVE-2023-22527](blog/investigating-elpaco-team-exploiting-confluence-cve-2023-22527.md)
+* [💀 investigating elpaco team exploiting confluence cve 2023 22527](blog/investigating-elpaco-team-exploiting-confluence-cve-2023-22527-1.md)
 
 ***
 
