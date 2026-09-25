@@ -1,0 +1,11 @@
+$schema: https://api.gitbook.com/gitbook-docs.yaml
+site:
+  title: "0xDeeb"
+  structure:
+    - type: space
+      key: space-1
+      title: 0xDeebSpace
+      path: ahmeds-organization
+      default: true
+      content:
+        directory: ./ahmeds-organization
