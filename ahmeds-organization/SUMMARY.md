@@ -2,10 +2,10 @@
 
 * [Whoami?](README.md)
 
-## Articals
+## Articles
 
-* [Investigating ELPACO-team Exploiting Confluence CVE-2023-22527](articals/investigating-elpaco-team-exploiting-confluence-cve-2023-22527.md)
-* [💀 Investigating ELPACO-team Exploiting Confluence CVE-2023-22527](articals/investigating-elpaco-team-exploiting-confluence-cve-2023-22527-1.md)
+* [Investigating ELPACO-team Exploiting Confluence CVE-2023-22527](articles/investigating-elpaco-team-exploiting-confluence-cve-2023-22527.md)
+* [💀 Investigating ELPACO-team Exploiting Confluence CVE-2023-22527](articles/investigating-elpaco-team-exploiting-confluence-cve-2023-22527-1.md)
 
 ***
 
