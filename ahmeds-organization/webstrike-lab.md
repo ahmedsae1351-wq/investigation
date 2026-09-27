@@ -8,9 +8,9 @@ hidden: true
 
 هنا عشان اعرف ف اي IP تانيه ولا لا فتحت قايمه statistics ثم IPv4statistics ثم All Addresses هنلاقي مش موجود غير ال 2 IP بس ف الفايل دا وبكدا نكون عرفنا ان ال IP: 117.11.88.124 ده هو الAttacker من خلال Three-Way Handshake
 
-![Screenshot 2024-12-15 234027.png](<.gitbook/assets/Screenshot_2024 12 15_234027 (1).png>)
+![Screenshot 2024-12-15 234027.png](<.gitbook/assets/Screenshot_2024 12 15_234027.png>)
 
-![Screenshot 2024-12-15 234040.png](<.gitbook/assets/Screenshot_2024 12 15_234040 (1).png>)
+![Screenshot 2024-12-15 234040.png](<.gitbook/assets/Screenshot_2024 12 15_234040.png>)
 
 دلوقتي هفلتر ال Packets اللي ال Attacker كان بيبعتها للسيرفر عن طريق بروتوكول HTTP ونشوف ردود السيرفر عليه :
 
@@ -43,7 +43,7 @@ hidden: true
 
 في طلب لـ `/uploads/` ظهر فيه **301 Redirect**، وده معناه إن المسار ممكن يكون حقيقي، والمهاجم ممكن يحاول يستخدمه أو يتلاعب بيه عشان يوصل لحاجة مفيدة.
 
-![Screenshot 2024-12-17 104742.png](<.gitbook/assets/Screenshot_2024 12 17_104742 (1).png>)
+![Screenshot 2024-12-17 104742.png](<.gitbook/assets/Screenshot_2024 12 17_104742.png>)
 
 لما اتعمقت اكتر ف التحليل وبدأت افتح ال Packets لقيت ان ال Attacker قدر فعلا يرفع الملف ال malicious عن طريق بورت 8080 بعد محاولات ورفعه ك صوره وكان الاسم الخاص بالملف image.jpg.php وبكدا ال Attacker قدر يستغل الثغره اللي بتسمح برفع ملفات malicious ع السيرفر ب أنه يوصل ل Remote Code Execution .
 
@@ -67,23 +67,23 @@ hidden: true
 
 دي عادة علامة على إن ال **Remote Code Execution (RCE)** أو **File Inclusion** نجح، لأن المهاجم دلوقتي قادر يطلب ملفات النظام ويقراها.
 
-![Screenshot 2024-12-17 115713.png](<.gitbook/assets/Screenshot_2024 12 17_115713 (1).png>)
+![Screenshot 2024-12-17 115713.png](<.gitbook/assets/Screenshot_2024 12 17_115713.png>)
 
 وكمان قدرت اوصل stream packet رقم 13 كان فيها الاوامر اللي نفذها ال Attacker :
 
-![Screenshot 2024-12-17 135214.png](<.gitbook/assets/Screenshot_2024 12 17_135214 (1).png>)
+![Screenshot 2024-12-17 135214.png](<.gitbook/assets/Screenshot_2024 12 17_135214.png>)
 
 ومن ال الريكوست اللي كان بيبعته ال Attacker عرفت ال User-Agent اللي بيستخدمه ال Attacker ومعلومات كمان زي Full Path اللي ال Attacker رفع عليه ال shell script :
 
 User-Agent: Mozilla/5.0 (X11; Linux x86\_64; rv:109.0) Gecko/20100101 Firefox/115.0
 
-![Screenshot 2024-12-17 121711.png](<.gitbook/assets/Screenshot_2024 12 17_121711 (1).png>)
+![Screenshot 2024-12-17 121711.png](<.gitbook/assets/Screenshot_2024 12 17_121711.png>)
 
 ف خطوه كنت عملتها ف الاول ممكن تكون مش مهمه لان ال Attackers بيستخدموا VPN ,VPS, Proxy ,وهي تحديد مكان ال Attacker بال IP :
 
 ودي بعض المعلومات عن ال IP واللي ربما تكون حقيقيه :
 
-![Screenshot 2024-12-17 130918.png](<.gitbook/assets/Screenshot_2024 12 17_130918 (1).png>)
+![Screenshot 2024-12-17 130918.png](<.gitbook/assets/Screenshot_2024 12 17_130918.png>)
 
 ### **نصائح لتأمين السيرفر ضد رفع الـ Web Shell أو الملفات الخبيثة:**
 

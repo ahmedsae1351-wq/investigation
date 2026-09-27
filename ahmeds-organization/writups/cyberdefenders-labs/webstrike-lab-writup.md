@@ -9,9 +9,9 @@ We will open the file using **Wireshark** and begin analyzing it. The first thin
 
 To verify if there are any other IP addresses in the file, I opened the **Statistics** menu, navigated to **IPv4 Statistics**, and selected **All Addresses**. We can see that only these two IP addresses exist in this file. From this, we can conclude that **IP: 117.11.88.124** is the attacker based on the Three-Way Handshake.
 
-<figure><img src="../../.gitbook/assets/Screenshot_2024 12 15_234027 (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Screenshot_2024 12 15_234027.png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../../.gitbook/assets/Screenshot_2024 12 15_234040 (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Screenshot_2024 12 15_234040.png" alt=""><figcaption></figcaption></figure>
 
 **Now I will filter the packets sent by the attacker to the server over the HTTP protocol and analyze the server's responses:**
 
@@ -43,9 +43,7 @@ To verify if there are any other IP addresses in the file, I opened the **Statis
 4. **301 Redirect Response:**\
    A **301 Redirect** response was observed for a request to `/uploads/`. This indicates that the path might actually exist. The attacker might try to use or manipulate it further to gain access to useful resources.
 
-
-
-<figure><img src="../../.gitbook/assets/Screenshot_2024 12 17_104742 (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Screenshot_2024 12 17_104742.png" alt=""><figcaption></figcaption></figure>
 
 Upon diving deeper into the analysis and inspecting the packets, I found that the attacker successfully uploaded the malicious file through port 8080 after multiple attempts. The file was uploaded as an image with the name `image.jpg.php`. This allowed the attacker to exploit the vulnerability that permits uploading malicious files to the server, leading to **Remote Code Execution (RCE)**.
 
@@ -66,27 +64,21 @@ If the attacker successfully reads this file, it means they managed to execute a
 
 This is typically a strong indication that **Remote Code Execution (RCE)** or **File Inclusion** has succeeded because the attacker is now able to request and read system files.
 
+<figure><img src="../../.gitbook/assets/Screenshot_2024 12 17_115713.png" alt=""><figcaption></figcaption></figure>
 
-
-<figure><img src="../../.gitbook/assets/Screenshot_2024 12 17_115713 (1).png" alt=""><figcaption></figcaption></figure>
-
-<figure><img src="../../.gitbook/assets/Screenshot_2024 12 17_135214 (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Screenshot_2024 12 17_135214.png" alt=""><figcaption></figcaption></figure>
 
 From the requests sent by the attacker, I was able to identify the **User-Agent** being used by the attacker, along with additional information such as the **Full Path** where the attacker uploaded the shell script.
 
 User-Agent: Mozilla/5.0 (X11; Linux x86\_64; rv:109.0) Gecko/20100101 Firefox/115.0
 
-
-
-<figure><img src="../../.gitbook/assets/Screenshot_2024 12 17_121711 (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Screenshot_2024 12 17_121711.png" alt=""><figcaption></figcaption></figure>
 
 One of the initial steps I performed, which might not be very significant since attackers often use **VPNs**, **VPSs**, and **Proxies** to hide their identities and locations, was determining the attacker's location using the IP address.
 
 Here is some information about the IP, which may or may not be accurate:
 
-
-
-<figure><img src="../../.gitbook/assets/Screenshot_2024 12 17_130918 (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Screenshot_2024 12 17_130918.png" alt=""><figcaption></figcaption></figure>
 
 #### **Tips to Secure the Server Against Web Shell or Malicious File Uploads**
 

@@ -26,11 +26,11 @@ Before proceeding, we must understand the basic steps of the authentication proc
 
     * **Negotiation**: The client sends a negotiation message to the server, indicating the NTLM version and capabilities it supports.
     * **Challenge**: The server generates a random challenge (a nonce) and sends it to the client.
-    * **Response**:&#x20;
+    * **Response**:
 
-    1- The client uses the user's password hash to encrypt the challenge and sends the                     encrypted response back to the server.&#x20;
+    1- The client uses the user's password hash to encrypt the challenge and sends the encrypted response back to the server.
 
-    &#x20;2- The server verifies the response by comparing it with its own calculation. If they match, the user is authenticated.
+    2- The server verifies the response by comparing it with its own calculation. If they match, the user is authenticated.
 
 <figure><img src="../../.gitbook/assets/Pasted image 20250123234355.png" alt=""><figcaption></figcaption></figure>
 
@@ -40,7 +40,7 @@ To search for the username used for authentication on the SMB service, there are
 
 The second method is by using a direct filter to locate the packets that contain NTLM authentication:
 
-ntlmssp.auth.username&#x20;
+ntlmssp.auth.username
 
 ntlmssp
 
@@ -50,15 +50,13 @@ As we have seen, the attacker has compromised the administrator account.
 
 ***
 
-
-
 During the attack, the adversary accessed certain files. Identifying which files were accessed can reveal the attacker's intent.
 
 To determine which file the attacker opened, go to File menu > Export Objects > SMB
 
 <figure><img src="../../.gitbook/assets/Screenshot 2025-01-24 001613.png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../../.gitbook/assets/Screenshot 2025-01-24 001627 (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Screenshot 2025-01-24 001627.png" alt=""><figcaption></figcaption></figure>
 
 The file name is Event Log. The attacker might have intended to delete the logs to avoid detection or to conceal their actions within the system.
 
@@ -89,11 +87,11 @@ o identify the packet, we will use the filter `dcerpc.opnum == 0`.
 
 <figure><img src="../../.gitbook/assets/Pasted image 20250124004327.png" alt=""><figcaption></figcaption></figure>
 
-To display the timestamp of the packet,&#x20;
+To display the timestamp of the packet,
 
 View > Time Display Format > UTC Date and Time of Day
 
-&#x20;or&#x20;
+or
 
 **Ctrl+Alt+7**
 
@@ -101,11 +99,9 @@ View > Time Display Format > UTC Date and Time of Day
 
 ***
 
-
-
 The attacker used "named pipes" for communication, suggesting they may have utilized Remote Procedure Calls (RPC) for lateral movement across the network. RPC allows one program to request services from another remotely, which could grant the attacker unauthorized access or control.
 
-When analyzing the packets, the **ISystemActivator** protocol column and the **RemoteCreateInstance** information column caught my attention.&#x20;
+When analyzing the packets, the **ISystemActivator** protocol column and the **RemoteCreateInstance** information column caught my attention.
 
 What is **ISystemActivator**?
 
@@ -149,9 +145,7 @@ This will display the conversation details, including the duration of the commun
 
 <figure><img src="../../.gitbook/assets/Screenshot 2025-01-24 013403.png" alt=""><figcaption></figcaption></figure>
 
-
-
-<figure><img src="../../.gitbook/assets/Screenshot 2025-01-24 013457 (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Screenshot 2025-01-24 013457.png" alt=""><figcaption></figcaption></figure>
 
 ***
 
@@ -161,7 +155,6 @@ I searched for the username to identify the name.
 
 <figure><img src="../../.gitbook/assets/Screenshot 2025-01-24 014715.png" alt=""><figcaption></figcaption></figure>
 
-To find the executable file:      File menu > Export Objects > SMB
+To find the executable file: File menu > Export Objects > SMB
 
 <figure><img src="../../.gitbook/assets/Screenshot 2025-01-24 015142.png" alt=""><figcaption></figcaption></figure>
-
