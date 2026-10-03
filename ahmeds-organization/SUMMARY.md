@@ -4,13 +4,13 @@
 
 ## Articles
 
-* [🕵️‍♂️ Investigating ELPACO-team Exploiting Confluence](articles/investigating-elpaco-team-exploiting-confluence-cve-2023-22527.md)
 * [💀 Investigating ELPACO-team Exploiting Confluence CVE-2023-22527](articles/investigating-elpaco-team-exploiting-confluence-cve-2023-22527-1.md)
-* [Investigating ELPACO-team Exploiting Confluence CVE-2023-22527](articles/investigating-elpaco-team-exploiting-confluence-cve-2023-22527-2.md)
+* [Investigating ELPACO-team Exploiting Confluence CVE-2023-22527](articles/investigating-elpaco-team-exploiting-confluence-cve-2023-22527.md)
 
 ***
 
-* [WebStrike Lab](webstrike-lab.md)
+* [WebStrike Lab](webstrike-lab/README.md)
+  * [🕵️‍♂️ Investigating ELPACO-team Exploiting Confluence CVE-2023-22527](webstrike-lab/investigating-elpaco-team-exploiting-confluence-cve-2023-22527.md)
 
 ## Writups
 
