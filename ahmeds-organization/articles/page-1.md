@@ -1,4 +1,4 @@
-# Investigating ELPACO-team Exploiting Confluence CVE-2023-22527
+# Page 1
 
 ## Case Summary
 
