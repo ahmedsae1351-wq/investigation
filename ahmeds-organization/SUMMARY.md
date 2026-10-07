@@ -5,7 +5,7 @@
 ## Articles
 
 * [💀 Investigating ELPACO-team Exploiting Confluence CVE-2023-22527](articles/investigating-elpaco-team-exploiting-confluence-cve-2023-22527-1.md)
-* [Untitled](articles/untitled.md)
+* [DFIR Investigation of an ELPACO-team Ransomware Intrusion via Confluence CVE-2023-22527](articles/dfir-investigation-of-an-elpaco-team-ransomware-intrusion-via-confluence-cve-2023-22527.md)
 * [Page 1](articles/page-1.md)
 
 ***
