@@ -1,12 +1,12 @@
-# Investigating ELPACO-team Exploiting Confluence CVE-2023-22527
+# Untitled
 
 ## Case Summary
 
-On September 2026, a threat actor compromised a corporate network by exploiting a critical Remote Code Execution (RCE) vulnerability (**CVE-2023-22527**)  in a public-facing Atlassian Confluence server. The vulnerability, an OGNL injection flaw in the template engine, allowed the attacker to execute arbitrary commands on the server without authentication by sending crafted POST requests to the `/template/aui/text-inline.vm` endpoint.
+In September 2026, a threat actor compromised a corporate network by exploiting a critical Remote Code Execution (RCE) vulnerability (**CVE-2023-22527**)  in a public-facing Atlassian Confluence server. The vulnerability, an OGNL injection flaw in the template engine, allowed the attacker to execute arbitrary commands on the server without authentication by sending crafted POST requests to the `/template/aui/text-inline.vm` endpoint.
 
 Upon gaining initial access, the threat actor deployed a **Metasploit Meterpreter** reverse shell payload named `HAHLGiDDb.exe`, establishing command and control (C2) communications back to their infrastructure. This provided the attacker with an interactive session on the compromised Confluence server, which served as the initial foothold into the network.
 
-To establish persistence and enable hands-on-keyboard access, the threat actor downloaded and silently installed **AnyDesk** remote desktop software on the compromised server. The installation was performed using the `--install` and `--start-with-win` flags, configuring AnyDesk to run as a Windows service under the `NT AUTHORITY\NETWORK SERVICE` account ensuring it would automatically start on system reboot. The attacker then set an unattended access password, allowing them to reconnect at will without user interaction.
+To establish persistence and enable hands-on-keyboard access, the threat actor downloaded and silently installed **AnyDesk** remote desktop software on the compromised server. The installation was performed using the `--install` and `--start-with-win` flags, configuring AnyDesk to run as a Windows service under the `NT AUTHORITY\NETWORK SERVICE` account, ensuring it would automatically start on system reboot. The attacker then set an unattended access password, allowing them to reconnect at will without user interaction.
 
 Simultaneously, the threat actor executed a batch script (`u1.bat`) to create a local administrator account named **"noname"** using `net user` and `net localgroup administrators` commands. This provided a secondary persistence mechanism: a dedicated Windows account with full administrative privileges that could be used to log in through AnyDesk with an isolated desktop session, reducing the risk of detection by legitimate administrators.
 
@@ -32,7 +32,7 @@ Once indexing was complete, the ransomware encrypted files across the compromise
 _Please note that the ransomware binaries (`ELPACO-team.exe` and `svhostss.exe`), as well as the integrated usage of the `Everything.exe` utility for reconnaissance, are part of a custom simulation built specifically for this controlled lab environment. While precisely engineered to mimic the real-world Tactics, Techniques, and Procedures (TTPs)—such as automated Master File Table enumeration, mass file encryption, and registry persistence—these are safe, simulated artifacts created solely for educational and digital forensic research purposes rather than original in-the-wild malware._
 {% endhint %}
 
-The investigation began at the end of the attack lifecycle. Critical servers were found paralyzed, with files appended with the `.ELPACO-team` extension .Across the affected directories, the threat actor distributed a ransom note named `Decryption_INFO.txt` .
+The investigation began at the end of the attack lifecycle. Critical servers were found paralyzed, with files appended with the `.ELPACO-team` extension. Across the affected directories, the threat actor distributed a ransom note named `Decryption_INFO.txt` .
 
 On the Desktop and across multiple directories under `C:\LabData`, I confirmed files were encrypted with the `.ELPACO-team` extension ([T1486](https://attack.mitre.org/techniques/T1486/)).
 
@@ -50,13 +50,13 @@ By filtering for files with the `.ELPACO-team` extension, I discovered that `svh
 
 `file.extension: "ELPACO-team"`&#x20;
 
-<figure><img src="../.gitbook/assets/Screenshot 2026-10-03 162743.png" alt=""><figcaption><p>svhostss.exe, the process responsible for files encryption</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/Screenshot 2026-10-03 162743.png" alt=""><figcaption><p>svhostss.exe, the process responsible for file encryption</p></figcaption></figure>
 
 Through the analysis of the compromised hosts, I determined that the ransomware was deployed and executed on `FILE-server` and `BACKUP`.
 
 <figure><img src="../.gitbook/assets/image (148).png" alt=""><figcaption><p>.ELPACO-team extension only appearing on FILE-server, BACKUP</p></figcaption></figure>
 
-To trace `svhostss.exe` back to its origin, I filtered file creation events on `FILE-server` and sorted them in chronological order. At 10:06:01, the logs revealed that `ELPACO-team.exe` spawned `svhostss.exe`.
+To trace `svhostss.exe` back to its origin, I filtered file creation events on `FILE-server` and sorted them in chronological order. At 10:06:01, the logs revealed that `ELPACO-team.exe` created `svhostss.exe` on disk, indicating that the executable was likely responsible for extracting or staging the ransomware component.
 
 `host.hostname: "FILE-server" and event.code: "11" and "svhostss.exe"`
 
@@ -74,25 +74,27 @@ My next step was to determine how this file was staged and executed on the syste
 
 `host.hostname: "FILE-server" and event.code: ("1" or "11") and *Desktop\\ELPACO-team.exe*`
 
-The file `ELPACO-team.exe` was initially created on the Desktop at `10:05:57.963` UTC by `Explorer.EXE`, and subsequently at `10:06:00.509` UTC, the process that spawned and executed `ELPACO-team.exe` was `explorer.exe`, confirming that the threat actor interacted with the host via an interactive GUI or RDP session.
+The file `ELPACO-team.exe` was initially created on the Desktop at `10:05:57.963` UTC by `Explorer.EXE`. Shortly afterward, at `10:06:00.509` UTC, the executable was launched by `explorer.exe`, indicating execution from an interactive Windows desktop session. At this stage, however, the available telemetry was insufficient to determine whether the session originated locally or through a remote-access mechanism.
+
+To determine the origin of that interactive session, I investigated network activity immediately preceding the execution of `ELPACO-team.exe`.
 
 <figure><img src="../.gitbook/assets/image (151).png" alt=""><figcaption><p>ELPACO-team.exe file creation.</p></figcaption></figure>
 
 <figure><img src="../.gitbook/assets/image (153).png" alt=""><figcaption><p>ELPACO-team.exe process creation.</p></figcaption></figure>
 
-My next objective was to investigate the initial access vector and determine how the threat actor established an interactive GUI or RDP session on the host.
+My next objective was to determine how the threat actor gained interactive access to `FILE-server` and identify the lateral movement technique used to reach the host.
 
 To verify the threat actor's initial access method and confirm an interactive Remote Desktop Protocol (RDP) session, I queried Sysmon network connection events (Event ID 3) targeting the default RDP port 3389 on `FILE-server`:
 
 `host.hostname: "FILE-server" and event.code: "3" and destination.port: 3389`
 
-The query returned 4 inbound network connection events. The most recent connection—occurring just prior to the malicious file deployment—was recorded at `10:03:02.862`. Telemetry shows an established connection handled by `svchost.exe`, originating from the source IP `192.168.30.10` (port `49974`) to destination IP `192.168.20.50` on port `3389`
+**The query returned four inbound TCP/3389 connection events. The most relevant connection occurred at `10:03:02.862` UTC, shortly before the ransomware payload was executed. Sysmon network telemetry showed `svchost.exe` handling an inbound connection from `VULNSRV` (`192.168.30.10:49974`) to `FILE-server` (`192.168.20.50:3389`).**
 
-Corroborating the network connection telemetry, Windows Security Event ID 4624 recorded a successful network logon (Logon Type 3) at `10:03:02` using `NTLM V2` authentication via `NtLmSsp`. The logon was authenticated for the compromised account `DETECTIONLAB\NONAME`, originating from source IP `192.168.30.10` associated with workstation name `VULNSRV`. This confirms the initial authentication stage leading to the interactive session.
+Corroborating the network connection telemetry, Windows Security Event ID 4624 recorded a successful network logon (Logon Type 3) at `10:03:02` using `NTLM V2` authentication via `NtLmSsp`. The logon was authenticated for the compromised account `DETECTIONLAB\NONAME`, originating from source IP `192.168.30.10` associated with workstation name `VULNSRV`. Corroborating the Sysmon network telemetry, Windows Security Event ID 4624 recorded a successful network logon (Logon Type 3) at `10:03:02`, using NTLM V2 authentication for the compromised account `DETECTIONLAB\NONAME`. The authentication originated from `VULNSRV` (`192.168.30.10`), matching the source of the previously observed TCP/3389 connection. Although Logon Type 3 alone does not confirm an interactive RDP logon, its timing and source, when correlated with the `mstsc.exe` execution and RDP network activity, strongly support RDP as the lateral movement mechanism.([T1021.001](https://attack.mitre.org/techniques/T1021/001/))
 
 <figure><img src="../.gitbook/assets/image (154).png" alt=""><figcaption></figcaption></figure>
 
-Having identified `VULNSRV` (`192.168.30.10`) as the source of the lateral movement and RDP session, I pivoted the investigation to `VULNSRV` to determine the initial access vector and uncover how the threat actor first gained a foothold in the environment.
+Having traced the RDP connection back to `VULNSRV` (`192.168.30.10`), I pivoted the investigation to the suspected patient-zero host to reconstruct the attack chain further backward toward the original external access vector.
 
 `host.hostname: "VULNSRV" and event.code: "3" and destination.ip: "192.168.20.50" and destination.port: 3389`&#x20;
 

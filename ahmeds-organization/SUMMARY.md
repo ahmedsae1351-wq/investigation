@@ -5,7 +5,7 @@
 ## Articles
 
 * [💀 Investigating ELPACO-team Exploiting Confluence CVE-2023-22527](articles/investigating-elpaco-team-exploiting-confluence-cve-2023-22527-1.md)
-* [Investigating ELPACO-team Exploiting Confluence CVE-2023-22527](articles/investigating-elpaco-team-exploiting-confluence-cve-2023-22527.md)
+* [Untitled](articles/untitled.md)
 * [Page 1](articles/page-1.md)
 
 ***
