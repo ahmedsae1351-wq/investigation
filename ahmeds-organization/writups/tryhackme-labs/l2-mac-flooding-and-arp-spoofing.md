@@ -85,7 +85,7 @@ IP for eth1 , network's CIDR prefix , عدد live hosts المتصلين بال�
 
 The diagram below describes your current situation where you are the **Attacker** and have persistent access to **eve.**
 
-![image.png](../../.gitbook/assets/image.png)
+![image.png](<../../.gitbook/assets/image (23).png>)
 
 اول حاجه هنشغل tcpdump علي eth1 عن طريق امر:
 
@@ -194,7 +194,7 @@ Wireshark هو أداة مفتوحة المصدر لتحليل الشبكات، 
 
 **ARP Spoofing**، أو ARP Poisoning، هو هجوم شبكي يُرسل رسائل ARP مزيفة على شبكة محلية (LAN)، ويربط عنوان MAC الخاص بالمهاجم بعنوان IP لجهاز آخر موجود على الشبكة. الهدف من الهجوم ده هو اعتراض، تعديل، أو إعادة توجيه حركة المرور الشبكية، وده ممكن يؤدي لمشاكل أمنية وتهديدات خطيرة.
 
-عشان تفهم التقنية دي أكتر، اقرأ مقالة ويكيبيديا عن  [ARP spoofing](https://en.wikipedia.org/wiki/ARP_spoofing).
+عشان تفهم التقنية دي أكتر، اقرأ مقالة ويكيبيديا عن [ARP spoofing](https://en.wikipedia.org/wiki/ARP_spoofing).
 
 الهجوم بيتم عن طريق إرسال رسائل ARP مزيفة (spoofed) عشان يربط المهاجم عنوان MAC بتاعه بعنوان IP خاص بجهاز تاني. وده بيخلي أي حركة مرور موجهة للـ IP ده تتبعت للمهاجم بدل ما تروح للجهاز الصحيح. هجوم ARP spoofing ممكن يسمح للمهاجم بإنه يعترض بيانات الشبكة، يعدل عليها، أو يوقفها تمامًا. وغالبًا بيُستخدم الهجوم ده كبداية لهجمات تانية زي DoS، MITM، أو Session Hijacking.
 
@@ -420,7 +420,7 @@ sudo ettercap -T -i eth1 -M arp -F whoami.ef
 
 بعد ثوانٍ من تنفيذ الأمر ده، هتشوف الرسالة:
 
-&#x20;_"###### ETTERFILTER: …"_ message and/or _"_
+_"###### ETTERFILTER: …"_ message and/or _"_
 
 ده معناه إنك استقبلت **reverse shell** من **Bob**!
 
@@ -439,6 +439,6 @@ sudo ettercap -T -i eth1 -M arp -F whoami.ef
 
 هنشوف محتويات ملف root.txt بامر cat root.txt
 
-وبكدا نكون خلصتا ال challing دا و شكرًا على وقتك، واتمنى يكون الرايتب مفيد. لو عندك أي سؤال، متترددش تسأل!&#x20;
+وبكدا نكون خلصتا ال challing دا و شكرًا على وقتك، واتمنى يكون الرايتب مفيد. لو عندك أي سؤال، متترددش تسأل!
 
 linkedin :[https://www.linkedin.com/in/0xj0ck/](https://www.linkedin.com/in/0xj0ck/)
