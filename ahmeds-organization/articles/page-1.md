@@ -24,7 +24,7 @@ A defining characteristic of this ransomware variant is its abuse of the legitim
 
 Once indexing was complete, the ransomware encrypted files across the compromised systems, appending the **`.ELPACO-team`** extension to each affected file. A ransom note named **`Decryption_INFO.txt`** was dropped in every directory containing encrypted files. The note instructed victims to contact the threat actor via email (`de_tech@tuta.io`) or Telegram (`@Online7_365`) for decryption key negotiation.
 
-<figure><img src="../.gitbook/assets/image (14) (1).png" alt=""><figcaption><p>DetectionLab Network Diagram</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (37).png" alt=""><figcaption><p>DetectionLab Network Diagram</p></figcaption></figure>
 
 ## Initial Triage and Ransomware Discovery <a href="#initial-triage-and-ransomware-discovery" id="initial-triage-and-ransomware-discovery"></a>
 
@@ -36,11 +36,11 @@ The investigation began at the end of the attack lifecycle. Critical servers wer
 
 On the Desktop and across multiple directories under `C:\LabData`, I confirmed files were encrypted with the `.ELPACO-team` extension ([T1486](https://attack.mitre.org/techniques/T1486/)).
 
-<figure><img src="../.gitbook/assets/image (77).png" alt=""><figcaption><p>Files encrypted with .ELPACO-team extension</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (100).png" alt=""><figcaption><p>Files encrypted with .ELPACO-team extension</p></figcaption></figure>
 
 Also, I found the ransom note called `Decryption_INFO.txt` dropped in Desktop and every directory containing encrypted files, which contained Decryption ID, Telegram User and email addresses for contacting the threat actors.
 
-<figure><img src="../.gitbook/assets/image (147).png" alt=""><figcaption><p>The ransom note containing email addresses and telegram user for the threat actors</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (170).png" alt=""><figcaption><p>The ransom note containing email addresses and telegram user for the threat actors</p></figcaption></figure>
 
 My next goal is to identify the process that encrypted the files and dropped the ransom note, in order to understand how the ransomware was delivered to these hosts by tracing the ransomware activities back to their origin.
 
@@ -54,13 +54,13 @@ By filtering for files with the `.ELPACO-team` extension, I discovered that `svh
 
 Through the analysis of the compromised hosts, I determined that the ransomware was deployed and executed on `FILE-server` and `BACKUP`.
 
-<figure><img src="../.gitbook/assets/image (148).png" alt=""><figcaption><p>.ELPACO-team extension only appearing on FILE-server, BACKUP</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (171).png" alt=""><figcaption><p>.ELPACO-team extension only appearing on FILE-server, BACKUP</p></figcaption></figure>
 
 To trace `svhostss.exe` back to its origin, I filtered file creation events on `FILE-server` and sorted them in chronological order. At 10:06:01, the logs revealed that `ELPACO-team.exe` spawned `svhostss.exe`.
 
 `host.hostname: "FILE-server" and event.code: "11" and "svhostss.exe"`
 
-<figure><img src="../.gitbook/assets/image (149).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (172).png" alt=""><figcaption></figcaption></figure>
 
 I then focused on `ELPACO-team.exe` to determine what was executed and how `svhostss.exe` was dropped onto the compromised hosts. I narrowed my scope to `FILE-server` for faster querying:
 
@@ -68,7 +68,7 @@ I then focused on `ELPACO-team.exe` to determine what was executed and how `svho
 
 I found 6 events in total. One of the events revealed that `ELPACO-team.exe` was deployed by the `ELPACO-team.exe` residing on the Desktop, which served as the self-extracting archive. This entire activity was executed under the compromised user account `NONAME` within the `DETECTIONLAB` domain.
 
-<figure><img src="../.gitbook/assets/image (150).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (173).png" alt=""><figcaption></figcaption></figure>
 
 My next step was to determine how this file was staged and executed on the system.
 
@@ -76,9 +76,9 @@ My next step was to determine how this file was staged and executed on the syste
 
 The file `ELPACO-team.exe` was initially created on the Desktop at `10:05:57.963` UTC by `Explorer.EXE`, and subsequently at `10:06:00.509` UTC, the process that spawned and executed `ELPACO-team.exe` was `explorer.exe`, confirming that the threat actor interacted with the host via an interactive GUI or RDP session.
 
-<figure><img src="../.gitbook/assets/image (151).png" alt=""><figcaption><p>ELPACO-team.exe file creation.</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (174).png" alt=""><figcaption><p>ELPACO-team.exe file creation.</p></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (153).png" alt=""><figcaption><p>ELPACO-team.exe process creation.</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (176).png" alt=""><figcaption><p>ELPACO-team.exe process creation.</p></figcaption></figure>
 
 My next objective was to investigate the initial access vector and determine how the threat actor established an interactive GUI or RDP session on the host.
 
@@ -90,7 +90,7 @@ The query returned 4 inbound network connection events. The most recent connecti
 
 Corroborating the network connection telemetry, Windows Security Event ID 4624 recorded a successful network logon (Logon Type 3) at `10:03:02` using `NTLM V2` authentication via `NtLmSsp`. The logon was authenticated for the compromised account `DETECTIONLAB\NONAME`, originating from source IP `192.168.30.10` associated with workstation name `VULNSRV`. This confirms the initial authentication stage leading to the interactive session.
 
-<figure><img src="../.gitbook/assets/image (154).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (177).png" alt=""><figcaption></figcaption></figure>
 
 Having identified `VULNSRV` (`192.168.30.10`) as the source of the lateral movement and RDP session, I pivoted the investigation to `VULNSRV` to determine the initial access vector and uncover how the threat actor first gained a foothold in the environment.
 
@@ -98,7 +98,7 @@ Having identified `VULNSRV` (`192.168.30.10`) as the source of the lateral movem
 
 The telemetry confirms an outbound network connection at `10:03:02.661` generated by the native Windows Remote Desktop client `mstsc.exe` (`C:\Windows\System32\mstsc.exe`) under the user account `noname`. The connection originated from `192.168.30.10` (source port `49974`) to destination IP `192.168.20.50` on port `3389`, definitively establishing that the threat actor leveraged the native RDP client from `VULNSRV` to conduct lateral movement to the file server.
 
-<figure><img src="../.gitbook/assets/image (155).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (178).png" alt=""><figcaption></figcaption></figure>
 
 Next, I investigated the execution lineage of `mstsc.exe` to determine how the threat actor launched the Remote Desktop client and identify its parent process.
 
@@ -106,7 +106,7 @@ Next, I investigated the execution lineage of `mstsc.exe` to determine how the t
 
 The process lineage analysis revealed that the parent process responsible for launching `mstsc.exe` was `netscan.exe`, located at `C:\Program Files\SoftPerfect Network Scanner\netscan.exe`. Launching the connection directly from this application's interface via `mstsc.exe /v:192.168.20.50` indicates that the threat actor was interacting with this machine through an interactive graphical user interface (GUI) session as well.&#x20;
 
-<figure><img src="../.gitbook/assets/image (156).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (179).png" alt=""><figcaption></figcaption></figure>
 
 My next objective is to investigate how `netscan.exe` was downloaded, installed, or staged on this host to uncover the initial access vector.
 
