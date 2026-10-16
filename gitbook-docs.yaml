@@ -4,7 +4,7 @@ site:
   structure:
     - type: space
       key: space-1
-      title: 0xDeebSpace
+      title: IQ404
       path: ahmeds-organization
       default: true
       content:
