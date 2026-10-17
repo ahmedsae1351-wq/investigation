@@ -85,7 +85,7 @@ IP for eth1 , network's CIDR prefix , عدد live hosts المتصلين بال�
 
 The diagram below describes your current situation where you are the **Attacker** and have persistent access to **eve.**
 
-![image.png](<../../.gitbook/assets/image (23).png>)
+![image.png](<../../.gitbook/assets/image (24).png>)
 
 اول حاجه هنشغل tcpdump علي eth1 عن طريق امر:
 
