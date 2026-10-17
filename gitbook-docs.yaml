@@ -4,7 +4,7 @@ site:
   structure:
     - type: space
       key: space-1
-      title: IQ404
+      title: Blog
       path: ahmeds-organization
       default: true
       content:
